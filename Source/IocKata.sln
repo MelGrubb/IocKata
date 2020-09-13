@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IocKata", "IocKata.csproj", "{0CE694A4-00A6-44F2-9F7F-827F7A4A0C23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B5B5EF04-0D60-468F-BC27-9F36707A01C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CE694A4-00A6-44F2-9F7F-827F7A4A0C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE694A4-00A6-44F2-9F7F-827F7A4A0C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE694A4-00A6-44F2-9F7F-827F7A4A0C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE694A4-00A6-44F2-9F7F-827F7A4A0C23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {782033F3-F82C-4B66-9BCC-C9C8144AE691}
+	EndGlobalSection
+EndGlobal
