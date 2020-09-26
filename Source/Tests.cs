@@ -14,17 +14,31 @@ namespace IocKata
             var instance2 = new Foo(new Bar(new Baz()));
             IoC.Register<IFoo>(instance2);
 
-            IoC.Register<IFoo>(instance1);
-            IoC.Register<IFoo>(instance2);
             var value = IoC.Resolve<IFoo>();
             Assert.AreSame(instance2, value);
         }
 
         [Test]
-        public void DelegateRegistrationTest()
+        public void Step2_DelegateRegistration()
         {
-            IoC.Reset();
-            IoC.Register<IFoo>(() => new Foo(new Bar(new Baz())));
+            IoC.Register<IBaz>(() => new Baz());
+            IoC.Register<IBar>(() => new Bar(IoC.Resolve<IBaz>()));
+            IoC.Register<IFoo>(() => new Foo(IoC.Resolve<IBar>()));
+
+            var value = IoC.Resolve<IFoo>();
+            Assert.IsInstanceOf<Foo>(value);
+            Assert.IsInstanceOf<Bar>(value.Bar);
+            Assert.IsInstanceOf<Baz>(value.Bar.Baz);
+        }
+
+        [Test]
+        public void Step3_SingletonDelegateRegistration()
+        {
+            IoC.Register<IBaz>(() => new Baz(), isSingleton: false);
+            Assert.AreNotSame(IoC.Resolve<IBaz>(), IoC.Resolve<IBaz>());
+
+            IoC.Register<IBaz>(() => new Baz(), isSingleton: true);
+            Assert.AreSame(IoC.Resolve<IBaz>(), IoC.Resolve<IBaz>());
         }
     }
 }
