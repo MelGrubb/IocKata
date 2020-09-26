@@ -67,5 +67,21 @@ namespace IocKata
             var baz = IoC.Resolve<IBaz>();
             Assert.IsFalse(baz.ExtraParameterWasSupplied);
         }
+
+        [Test]
+        public void Step6_AssemblyScanning()
+        {
+            IoC.Reset();
+            IoC.Register(GetType().Assembly);
+
+            var foo = IoC.Resolve<IFoo>();
+            Assert.IsInstanceOf<Foo>(foo);
+            Assert.IsInstanceOf<Bar>(foo.Bar);
+            Assert.IsInstanceOf<Baz>(foo.Bar.Baz);
+
+            Assert.AreNotSame(foo, IoC.Resolve<IFoo>());
+            Assert.AreNotSame(foo.Bar, IoC.Resolve<IFoo>().Bar);
+            Assert.AreNotSame(foo.Bar.Baz, IoC.Resolve<IBar>().Baz);
+        }
     }
 }

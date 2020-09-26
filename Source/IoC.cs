@@ -31,6 +31,15 @@ namespace IocKata
             Dependencies[typeof(T1)] = (typeof(T2), DependencyType.Dynamic, isSingleton);
         }
 
+        public static void Register(Assembly assembly)
+        {
+            var types = assembly.GetTypes().Where(t => t.GetInterfaces().Any(i => i.Name == $"I{t.Name}"));
+            foreach (var type in types)
+            {
+                Dependencies[type.GetInterface($"I{type.Name}")] = (type, DependencyType.Dynamic, false);
+            }
+        }
+
         public static T Resolve<T>()
         {
             return (T) Resolve(typeof(T));
@@ -83,6 +92,11 @@ namespace IocKata
                     return value;
                 }
             }
+        }
+
+        public static void Reset()
+        {
+            Dependencies.Clear();
         }
     }
 }
