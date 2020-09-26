@@ -6,12 +6,14 @@ namespace IocKata
     public class Tests
     {
         [Test]
-        public void InstanceRegistrationTest()
+        public void Step1_InstanceRegistration()
         {
             var instance1 = new Foo(new Bar(new Baz()));
-            var instance2 = new Foo(new Bar(new Baz()));
+            IoC.Register<IFoo>(instance1);
 
-            IoC.Reset();
+            var instance2 = new Foo(new Bar(new Baz()));
+            IoC.Register<IFoo>(instance2);
+
             IoC.Register<IFoo>(instance1);
             IoC.Register<IFoo>(instance2);
             var value = IoC.Resolve<IFoo>();
