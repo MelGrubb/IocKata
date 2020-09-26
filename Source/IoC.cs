@@ -5,27 +5,36 @@ namespace IocKata
 {
     public static class IoC
     {
-        private static readonly Dictionary<Type, object> Instances = new Dictionary<Type, object>();
+        private enum DependencyType
+        {
+            Instance,
+            Delegate,
+        }
+
+        private static readonly Dictionary<Type, (object value, DependencyType dependencyType)> Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType)>();
 
         public static void Register<T>(T instance)
         {
-            Dependencies[typeof(T)] = instance;
+            Dependencies[typeof(T)] = (instance, DependencyType.Instance);
         }
 
         public static void Register<T>(Func<object> func)
         {
-            Delegates[typeof(T)] = func;
-        }
-
-        public static void Reset()
-        {
-            Instances.Clear();
-            Delegates.Clear();
+            Dependencies[typeof(T)] = (func, DependencyType.Delegate);
         }
 
         public static T Resolve<T>()
         {
-            return (T) Dependencies[typeof(T)];
+            var dependency = Dependencies[typeof(T)];
+
+            if (dependency.dependencyType == DependencyType.Instance)
+            {
+                return (T)dependency.value;
+            }
+            else
+            {
+                return (T)((Func<object>)dependency.value).Invoke();
+            }
         }
     }
 }

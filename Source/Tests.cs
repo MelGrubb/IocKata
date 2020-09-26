@@ -21,10 +21,16 @@ namespace IocKata
         }
 
         [Test]
-        public void DelegateRegistrationTest()
+        public void Step2_DelegateRegistration()
         {
-            IoC.Reset();
-            IoC.Register<IFoo>(() => new Foo(new Bar(new Baz())));
+            IoC.Register<IBaz>(() => new Baz());
+            IoC.Register<IBar>(() => new Bar(IoC.Resolve<IBaz>()));
+            IoC.Register<IFoo>(() => new Foo(IoC.Resolve<IBar>()));
+
+            var value = IoC.Resolve<IFoo>();
+            Assert.IsInstanceOf<Foo>(value);
+            Assert.IsInstanceOf<Bar>(value.Bar);
+            Assert.IsInstanceOf<Baz>(value.Bar.Baz);
         }
     }
 }
