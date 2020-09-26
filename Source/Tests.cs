@@ -40,5 +40,23 @@ namespace IocKata
             IoC.Register<IBaz>(() => new Baz(), isSingleton: true);
             Assert.AreSame(IoC.Resolve<IBaz>(), IoC.Resolve<IBaz>());
         }
+
+        [Test]
+        public void Step4_AutomaticResolution()
+        {
+            IoC.Register<IBaz, Baz>();
+            IoC.Register<IBar, Bar>(isSingleton: true);
+            IoC.Register<IFoo, Foo>();
+
+            var foo = IoC.Resolve<IFoo>();
+            Assert.IsInstanceOf<Foo>(foo);
+            Assert.IsInstanceOf<Bar>(foo.Bar);
+            Assert.IsInstanceOf<Baz>(foo.Bar.Baz);
+
+            Assert.AreNotSame(foo, IoC.Resolve<IFoo>());
+            Assert.AreSame(foo.Bar, IoC.Resolve<IBar>());
+            Assert.AreSame(foo.Bar, IoC.Resolve<IBar>());
+            Assert.AreNotSame(foo.Bar.Baz, IoC.Resolve<IBaz>());
+        }
     }
 }
