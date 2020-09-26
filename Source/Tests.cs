@@ -58,5 +58,14 @@ namespace IocKata
             Assert.AreSame(foo.Bar, IoC.Resolve<IBar>());
             Assert.AreNotSame(foo.Bar.Baz, IoC.Resolve<IBaz>());
         }
+
+        [Test]
+        public void Step5_InjectionConstructorAttribute()
+        {
+            IoC.Register<IBaz, Baz>();
+
+            var baz = IoC.Resolve<IBaz>();
+            Assert.IsFalse(baz.ExtraParameterWasSupplied);
+        }
     }
 }

@@ -32,9 +32,21 @@
 
     public interface IBaz
     {
+        bool ExtraParameterWasSupplied { get; }
     }
 
     public class Baz : IBaz
     {
+        public bool ExtraParameterWasSupplied { get; }
+
+        [InjectionConstructor]
+        public Baz()
+        {
+        }
+
+        public Baz(object extraParameter)
+        {
+            ExtraParameterWasSupplied = true;
+        }
     }
 }

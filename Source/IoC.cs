@@ -57,7 +57,9 @@ namespace IocKata
             else
             {
                 var concreteType = (Type) dependency.value;
-                var constructorInfo = concreteType.GetConstructors().OrderByDescending(o => (o.GetParameters().Length)).First();
+                var constructorInfo = concreteType.GetConstructors()
+                    .OrderByDescending(o => (o.GetCustomAttributes(typeof(InjectionConstructorAttribute), false).Any()))
+                    .ThenByDescending(o => (o.GetParameters().Length)).First();
                 var parameterInfos = constructorInfo.GetParameters();
 
                 if (parameterInfos.Length == 0)
