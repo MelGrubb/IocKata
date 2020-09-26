@@ -15,7 +15,7 @@ namespace IocKata
 
         public static void Register<T>(T instance)
         {
-            Dependencies[typeof(T)] = (instance, DependencyType.Instance, false);
+            Dependencies[typeof(T)] = (instance, DependencyType.Instance, true);
         }
 
         public static void Register<T>(Func<object> func, bool isSingleton = false)
