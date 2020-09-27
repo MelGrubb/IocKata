@@ -58,7 +58,7 @@ namespace IocKata
                 var value = ((Func<object>) dependency.value).Invoke();
                 if (dependency.isSingleton)
                 {
-                    Dependencies[type] = (value, DependencyType.Instance, false);
+                    Dependencies[type] = (value, DependencyType.Instance, true);
                 }
 
                 return value;
@@ -86,7 +86,7 @@ namespace IocKata
 
                     if (dependency.isSingleton)
                     {
-                        Dependencies[type] = (value, DependencyType.Instance, false);
+                        Dependencies[type] = (value, DependencyType.Instance, true);
                     }
                 
                     return value;
