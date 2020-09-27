@@ -33,7 +33,7 @@ namespace IocKata
             if (dependency.dependencyType == DependencyType.Delegate)
             {
                 value = ((Func<object>) dependency.value).Invoke();
-                if (dependency.isSingleton) Dependencies[type] = (value, DependencyType.Instance, false);
+                if (dependency.isSingleton) Dependencies[type] = (value, DependencyType.Instance, true);
 
                 return value;
             }
@@ -51,7 +51,7 @@ namespace IocKata
             foreach (var parameterInfo in parameterInfos) parameters.Add(Resolve(parameterInfo.ParameterType));
             value = constructorInfo.Invoke(parameters.ToArray());
 
-            if (dependency.isSingleton) Dependencies[type] = (value, DependencyType.Instance, false);
+            if (dependency.isSingleton) Dependencies[type] = (value, DependencyType.Instance, true);
 
             return value;
         }
