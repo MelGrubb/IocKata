@@ -1,16 +1,22 @@
 # IOC Kata
 
-One of the tools we often take for granted these days is the Inversion of Control (IoC) container, which makes following the Dependency Inversion Principle (the "D" in SOLID) a lot less painful to implement. A lot of people confuse the two, but they are not the same thing. The IoC container is just one way of implementing the principle, and is the glue that holds most of our work together. Still, it's a black box to most developers, who have no idea how the magic happens under the covers. I've found that the best way to truly understand something is to build one yourself, so in this post we'll walk through creating a fully-functional IoC container that handles the most common cases.
+One of the tools we often take for granted these days is the Inversion of Control (IoC) container. An IoC makes following the Dependency Inversion Principle (the "D" in SOLID) relatively simple, so it's not surprising that developers often confuse the two, but they are not the same thing. The IoC container is just one way of implementing the principle, and is the glue that holds most of our modern work together. Still, it's a black box to most developers, who have no idea how the magic happens under the covers. I've found that the best way to truly understand something is to build one yourself, so in this post we'll walk through creating a fully-functional IoC container that handles the most common cases.
 
-We'll be building an IoC in the form of a coding kata, a practice which grew out of the Software Craftsmanship movement of the mid '90s. Katas are short coding exercises meant to help reinforce and understand solutions to common problems so that when they arise in the real world, the developer is already familiar with the solution. The developer writes a more or less canned solution through a series of small steps, adding a feature here, refactoring there, and working toward the accepted solution to a common business problem or perhaps implementing a simple game.
+We'll be building an IoC in the form of a coding kata, a practice which grew out of the Software Craftsmanship movement of the mid '90s. Katas are short coding exercises meant to help reinforce and understand solutions to common problems so that when they arise in the real world, you'll recognize them, and already be already familiar with the solution. You write a more or less canned solution through a series of small steps, adding a feature here, refactoring there, and working toward the accepted solution to a common business problem or perhaps implementing a simple game.
 
-For me, the most useful katas were always those that taught me something, or were simply fun on their own. Guy Royse's "Evercraft Kata" (https://github.com/guyroyse/evercraft-kata) is not what I'd call a warm-up exercise, as it would likely take you many hours to complete your first time through. It doesn't result in a finished product that you can leverage in a business scenario, but it /does/ help you develop a way of thinking about the kinds of problems that /do/ come up in daily business such as adding new features to existing entities like users or businesses without bringing the existing system down in the process. If you've never completed it, I recommend working through it some weekend.
+For me, the most useful katas were always those that taught me something, or were simply fun on their own. Guy Royse's "Evercraft Kata" (https://github.com/guyroyse/evercraft-kata) is not what I'd call a warm-up exercise, as it would likely take you many hours to complete your first time through. It doesn't result in a finished product that you can leverage in a business scenario, but it _does_ help you develop a way of thinking about the kinds of problems that _do_ come up in daily business such as adding new features to existing entities like users or businesses without bringing the existing system down in the process. If you've never completed it, I recommend working through it some weekend.
 
 I wrote my "Itty Bitty IoC" after reading about some micro-IoC implementations by Oren Eini (http://ayende.com/Blog/archive/2007/10/20/Building-an-IoC-container-in-15-lines-of-code.aspx) and Ken Egozi (http://www.kenegozi.com/Blog/2008/01/17/its-my-turn-to-build-an-ioc-container-in-15-minutes-and-33-lines.aspx). I saw how an IoC works under the covers, and decided to build my own. Since that time, I've evolved it into a coding kata because it really is quite simple to understand and use. I'd like to walk you through that kata now. We'll build it up one feature at a time, following a test-driven development pattern by first writing a test to demonstrate the behavior we want, and then implementing that feature before moving on to the next.
 
+## Step Zero - Setting up the dojo
+
+Clone the GitHub repo at https://github.com/MelGrubb/IocKata, and ensure that you are on the "main" branch. This has an empty class for our IoC, an empty Test class, and a trio of inter-dependent classes called Foo, Bar, and Baz that will be used in the tests. I'll be using NUnit because it's the most universally understood testing library in the .Net space, but you are welcome to use whichever testing library you are most comfortable with. The repository also contains branches for each of the completed steps.
+
 ## Step One - Instance Registration
 
-The first, and simplest kind of registration is nothing more than a dictionary of types or interfaces, and instances OF those types. This will simply hand us back an existing instance of a class whenever we ask for it. In essence, when I ask for an IFoo, I want the IoC to hand me back the specific instance of Foo that I registerd. This first test verifies two things; that an instance can be both registered and resolved, and that subsequent registrations override previous ones (i.e. last-in-wins). I'm implementing this using NUnit because it's the most universally understood testing library in the .Net space. We'll be building using instances of three types; Foo, Bar, and Baz, which are available in the GitHub repository.
+The first, and simplest kind of registration is nothing more than a directory of types or interfaces, and instances _of_ those types. This will simply hand us back an existing instance of a class whenever we ask for it. In essence, when I ask for an IFoo, I want the IoC to hand me back the specific instance of Foo that I registerd.
+
+This first test verifies two things; that an instance can be both registered and resolved, and that subsequent registrations override previous ones (i.e. last-in-wins).
 
 ```csharp
 using NUnit.Framework;
@@ -36,7 +42,7 @@ namespace IocKata
 }
 ```
 
-To implement this functionality, we're going to need a couple things. We'll need a container of some kind to store the dependencies, those are the types we're registering, and we'll need a method to return them on demand. We can do this with a simple dictionary, using the type as the key, and the instance as the value.
+To implement this functionality, we're going to need a few things. We'll need a container of some kind to store the dependencies, those are the types we're registering. We can do this with a simple dictionary, using the type as the key, and the instance as the value. We'll also need a method to add instances _to_ this dictionary, and another to retrieve them.
 
 ```csharp
 using System;
@@ -65,7 +71,7 @@ At this point, the test should pass, and we're ready to move on to the next step
 
 ## Step Two - Delegate Registration
 
-The next kind of registration is only slightly more complicated. Rather than providing the IoC with the actual object to return, we'll pass in a function to be executed whenever that dependency is resolved, essentially telling the IoC /how/ to build the type. These functions can even leverage the IoC as part of their logic. The usage should look like the following test.
+The next kind of registration is only slightly more complicated. Rather than providing the IoC with the actual object to return, we'll pass in a function to be executed whenever that dependency is resolved, essentially telling the IoC _how_ to build the type. These functions can even leverage the IoC as part of their logic. The usage should look like the following test.
 
 ```csharp
 [Test]
@@ -82,7 +88,7 @@ public void Step2_DelegateRegistration()
 }
 ```
 
-We can store the function in the existing dictionary since functions can be considered as objects, but we'll need a way to remember whether the entry represents an instance or a function, so we'll alter the dictionary to store a Tuple containing the object or function, and a new enumeration value that says what kind of dependency it is. We'll use the newer tuple syntax introduced in C#7 to make this more readable.
+We can store the function in the existing dictionary since functions can be considered as objects, but we'll need a way to remember whether the entry represents an instance or a function, so we'll alter the dictionary to store a Tuple containing the object or function, and a new enumeration value that says what kind of dependency it is. We'll use the newer tuple syntax introduced in C# 7 to make this more readable later on, even if the declaration is a bit wordy.
 
 ```csharp
 private enum DependencyType
@@ -91,7 +97,8 @@ private enum DependencyType
     Delegate,
 }
 
-private static readonly Dictionary<Type, (object value, DependencyType dependencyType)> Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType)>();
+private static readonly Dictionary<Type, (object value, DependencyType dependencyType)> Dependencies
+    = new Dictionary<Type, (object value, DependencyType dependencyType)>();
 ```
 
  Next, we'll need to modify the existing instance registration method to match, and add the new delegate registration function.
@@ -128,7 +135,7 @@ public static T Resolve<T>()
 
 ## Step Three - Singletons
 
-With one minor tweak, we can combine the instance and delegate resolution together in order to construct objects as singletons. That is to say we'll create a new instance of the dependency the first time it is asked for, but return that same instance for every subsequent call. This next test illustrates the behavior we are after.
+With one minor tweak, we can combine the instance and delegate resolution together in order to construct objects as singletons. That is to say we'll create a new instance of the dependency the first time it is asked for, but return that same instance for every subsequent call. This next test illustrates the behavior we want.
 
 ```csharp
 [Test]
@@ -142,10 +149,11 @@ public void Step3_SingletonDelegateRegistration()
 }
 ```
 
-We'll need to update the dictionary again, this time adding a third value to the tuple to indicate whether or not the registration should be a singleton or not, and update the existing Register methods.
+We'll need to update the dictionary again, this time adding a third value to the tuple to indicate whether or not the registration should be a singleton or not, and update the existing Register methods. The isSingleton value won't make any difference for Instance registrations, but I'd consider them singletons by definition, so I'll set it to true in the first Register method.
 
 ```csharp
-private static readonly Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)> Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>();
+private static readonly Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>
+    Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>();
 
 public static void Register<T>(T instance)
 {
@@ -158,7 +166,7 @@ public static void Register<T>(Func<object> func, bool isSingleton = false)
 }
 ```
 
-Finally, we'll update the Resolve method to create the dependency instance, and update the existing registration to be of type Instance the first time it's called.
+Finally, we'll update the Resolve method to create the dependency instance as usual, but re-register it as an instance when it's supposed to be a singleton.
 
 ```csharp
 public static T Resolve<T>()
@@ -174,7 +182,7 @@ public static T Resolve<T>()
         var value = (T) ((Func<object>) dependency.value).Invoke();
         if (dependency.isSingleton)
         {
-            Dependencies[typeof(T)] = (value, DependencyType.Instance, false);
+            Dependencies[typeof(T)] = (value, DependencyType.Instance, true);
         }
 
         return value;
@@ -182,11 +190,11 @@ public static T Resolve<T>()
 }
 ```
 
-This is now a fully functional IoC, except for the fact that you have to tell it explicitly how to build everything. It doesn't know how to figure out anything on its own... yet.
+This is now a usable IoC, except for the fact that you have to tell it explicitly how to build everything. It doesn't know how to figure out anything on its own... yet.
 
 ## Step Four - Dynamic Resolution
 
-One of the hallmarks of a real IoC is the ability for it to figure some things out on its own. As long as a types dependencies are also registered, it shouldn't need to be given a function to do the work. It should just know what to do. Its usage should look like this.
+One of the hallmarks of a real IoC is the ability for it to figure some things out on its own. As long as a type's dependencies are also registered, it shouldn't need to be given a function to do the work. It should just know what to do. Its usage should look like this.
 
 ```csharp
 [Test]
@@ -207,7 +215,7 @@ public void Step4_AutomaticResolution()
 }
 ```
 
-You'll notice that in this test, we're no longer providing a delegate function. We're just telling the IoC what concrete class we want when we ask for the registered interface. It's up to the IoC to choose a constructor and invoke it, resolving any of its dependencies. It's easier than it sounds. We'll create a third enumeration entry to represent this case, and add a new Register method.
+You'll notice that in this test, we're no longer providing a delegate function. We're just telling the IoC what concrete class we want when we ask for the registered interface. It's up to the IoC to choose a constructor and invoke it, resolving any of the concrete class' dependencies. It's easier than it sounds. We'll create a third enumeration entry to represent this case, and add a new Register method.
 
 ```csharp
 private enum DependencyType
@@ -223,7 +231,7 @@ public static void Register<T1, T2>(bool isSingleton = false)
 }
 ```
 
-Because generics are a compile-time thing, we won't be able to use the existing generic Resolve method to build the constructor parameters at runtime. So we'll first need to extract the main logic of the Resolve method into a private, non-generic version that simply returns objects, and call if from the existing generic Resolve method. This will allow it to call back into itself to resolve the constructor parameters at runtime. I won't go into all the details of the new Resolve branch since this post is long enough already, and isn't meant to be a tutorial on reflection, but the gist is this. Find the constructor, resolve all of its parameters by calling back in to the Resolve method, and then use those parameters to invoke the constructor of the type you were initially trying to build. Here is the completed version.
+Because generics are a compile-time thing, we won't be able to use the existing generic Resolve method to build the constructor parameters at runtime. So we'll first need to extract the main logic of the Resolve method into a private, non-generic version that simply returns objects, and call it from the existing generic Resolve method. This will allow the newly-extracted method to call back into itself to resolve the constructor parameters at runtime. I won't go into all the details of the new Resolve branch here since this post is long enough already, and isn't meant to be a tutorial on reflection, but the gist is this. Find the "greediest" constructor, that is the one with the most parameters, resolve those parameters by calling back in to the Resolve method, and then use those parameters to invoke the constructor of the type you were initially trying to build. Here is the completed version.
 
 ```csharp
 public static T Resolve<T>()
@@ -244,7 +252,7 @@ private static object Resolve(Type type)
         var value = ((Func<object>) dependency.value).Invoke();
         if (dependency.isSingleton)
         {
-            Dependencies[type] = (value, DependencyType.Instance, false);
+            Dependencies[type] = (value, DependencyType.Instance, true);
         }
 
         return value;
@@ -252,7 +260,8 @@ private static object Resolve(Type type)
     else
     {
         var concreteType = (Type) dependency.value;
-        var constructorInfo = concreteType.GetConstructors().OrderByDescending(o => (o.GetParameters().Length)).First();
+        var constructorInfo = concreteType.GetConstructors()
+		    .OrderByDescending(o => (o.GetParameters().Length)).First();
         var parameterInfos = constructorInfo.GetParameters();
 
         if (parameterInfos.Length == 0)
@@ -270,7 +279,7 @@ private static object Resolve(Type type)
 
             if (dependency.isSingleton)
             {
-                Dependencies[type] = (value, DependencyType.Instance, false);
+                Dependencies[type] = (value, DependencyType.Instance, true);
             }
 
             return value;
@@ -279,15 +288,10 @@ private static object Resolve(Type type)
 }
 ```
 
-And that's it. We have a complete IoC in 86 lines. You can make that even smaller if you forego some readability, and remove the "else"s from the Resolve method, and the brackets from the branches with single instructions. You can see why I called it IttyBittyIoC. There is still more you can do to make it even better.
+And that's it. We have a complete IoC in under 100 lines. You can make it even smaller if you forego some readability by removing the "else"s from the Resolve method, and the brackets from the branches with single instructions. You can see why I called it IttyBittyIoC, but there is still more you can do to make it even better.
 
 ## Extra credit:
-Add an InjectionConstructorAttribute to manually mark which constructor you want the IoC to use.
-Add convention-based assembly scanning to match up interfaces with similarly-named classes (e.g. IFoo/Foo).
+- Add an InjectionConstructorAttribute to manually mark which constructor you want the IoC to use.
+- Add convention-based assembly scanning to match up interfaces with similarly-named classes (e.g. IFoo/Foo).
 
 You can look at the Step5 and Step6 branches in the GitHub repo to see how I implemented these features, and Step7 to see the fully-refactored, minimalist, 68-line version.
-
-TODO:
-Check C# version that introduced new Tuple syntax.
-Update steps 2 and 3 to pass "true" for IsSingleton on instance registration.
-Fix master branch to be the starting point, with only the skeleton FooBarBaz, IoC and Tests classes, but no implementations.
