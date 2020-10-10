@@ -97,7 +97,8 @@ private enum DependencyType
     Delegate,
 }
 
-private static readonly Dictionary<Type, (object value, DependencyType dependencyType)> Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType)>();
+private static readonly Dictionary<Type, (object value, DependencyType dependencyType)> Dependencies
+    = new Dictionary<Type, (object value, DependencyType dependencyType)>();
 ```
 
  Next, we'll need to modify the existing instance registration method to match, and add the new delegate registration function.
@@ -151,7 +152,8 @@ public void Step3_SingletonDelegateRegistration()
 We'll need to update the dictionary again, this time adding a third value to the tuple to indicate whether or not the registration should be a singleton or not, and update the existing Register methods. The isSingleton value won't make any difference for Instance registrations, but I'd consider them singletons by definition, so I'll set it to true in the first Register method.
 
 ```csharp
-private static readonly Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)> Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>();
+private static readonly Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>
+    Dependencies = new Dictionary<Type, (object value, DependencyType dependencyType, bool isSingleton)>();
 
 public static void Register<T>(T instance)
 {
@@ -258,7 +260,8 @@ private static object Resolve(Type type)
     else
     {
         var concreteType = (Type) dependency.value;
-        var constructorInfo = concreteType.GetConstructors().OrderByDescending(o => (o.GetParameters().Length)).First();
+        var constructorInfo = concreteType.GetConstructors()
+		    .OrderByDescending(o => (o.GetParameters().Length)).First();
         var parameterInfos = constructorInfo.GetParameters();
 
         if (parameterInfos.Length == 0)
