@@ -215,7 +215,7 @@ public void Step4_AutomaticResolution()
 }
 ```
 
-You'll notice that in this test, we're no longer providing a delegate function. We're just telling the IoC what concrete class we want when we ask for the registered interface. It's up to the IoC to choose a constructor and invoke it, resolving any of the concrete class' dependencies. It's easier than it sounds. We'll create a third enumeration entry to represent this case, and add a new Register method.
+You'll notice that in this test, we're no longer providing a delegate function. We're just telling the IoC what concrete class we want when we ask for the registered interface. It's up to the IoC to choose a constructor and invoke it, resolving any of the concrete class's dependencies. It's easier than it sounds. We'll create a third enumeration entry to represent this case, and add a new Register method.
 
 ```csharp
 private enum DependencyType
